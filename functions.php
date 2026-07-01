@@ -49,6 +49,82 @@ function w3s_menu_fallback() {
 	echo '</ul>';
 }
 
+/* ---------- 라이브 브리핑: 실시간 뉴스 + 발행기관 유튜브 ---------- */
+
+/* 피드 캐시 5분 */
+function w3s_feed_cache_5min() { return 300; }
+
+function w3s_fetch_feed_cached( $urls ) {
+	if ( ! function_exists( 'fetch_feed' ) ) {
+		include_once ABSPATH . WPINC . '/feed.php';
+	}
+	add_filter( 'wp_feed_cache_transient_lifetime', 'w3s_feed_cache_5min' );
+	$feed = fetch_feed( $urls );
+	remove_filter( 'wp_feed_cache_transient_lifetime', 'w3s_feed_cache_5min' );
+	return $feed;
+}
+
+/* 뉴스 소스 (한국어 + 영어 혼합) — 필터로 교체 가능 */
+function w3s_news_sources() {
+	return apply_filters( 'w3s_news_sources', array(
+		'https://www.blockmedia.co.kr/feed',
+		'https://kr.cointelegraph.com/rss',
+		'https://cointelegraph.com/rss',
+		'https://www.coindesk.com/arc/outboundfeeds/rss/',
+	) );
+}
+
+/* 최신 뉴스 아이템 (피드별 개별 수집 — 일부 실패해도 나머지 표시) */
+function w3s_live_news( $limit = 8 ) {
+	$out = array();
+	foreach ( w3s_news_sources() as $url ) {
+		$feed = w3s_fetch_feed_cached( $url );
+		if ( is_wp_error( $feed ) ) continue;
+		foreach ( $feed->get_items( 0, 4 ) as $item ) {
+			$src = $item->get_feed();
+			$out[] = array(
+				'title'  => $item->get_title(),
+				'url'    => $item->get_permalink(),
+				'source' => $src ? $src->get_title() : '',
+				'time'   => (int) $item->get_date( 'U' ),
+			);
+		}
+	}
+	usort( $out, function ( $a, $b ) { return $b['time'] - $a['time']; } );
+	return array_slice( $out, 0, $limit );
+}
+
+/* 발행기관 유튜브 채널 — 필터로 추가/교체 가능 */
+function w3s_issuer_channels() {
+	return apply_filters( 'w3s_issuer_channels', array(
+		'UCNOfzGXD_C9YMYmnefmPH0g' => '이더리움 재단',
+		'UCjok1uTSBUgvRYQaASz6YWw' => 'Ripple',
+		'UC9AdQPUe4BdVJ8M9X7wxHUA' => 'Solana',
+		'UCbQ9vGfezru1YRI1zDCtTGg' => '카르다노 재단',
+	) );
+}
+
+/* 채널별 최신 영상 (날짜순 정렬) */
+function w3s_issuer_videos( $per_channel = 1 ) {
+	$videos = array();
+	foreach ( w3s_issuer_channels() as $channel_id => $label ) {
+		$feed = w3s_fetch_feed_cached( 'https://www.youtube.com/feeds/videos.xml?channel_id=' . $channel_id );
+		if ( is_wp_error( $feed ) ) continue;
+		foreach ( $feed->get_items( 0, $per_channel ) as $item ) {
+			$vid = str_replace( 'yt:video:', '', $item->get_id() );
+			if ( ! preg_match( '/^[A-Za-z0-9_-]{6,}$/', $vid ) ) continue;
+			$videos[] = array(
+				'id'      => $vid,
+				'title'   => $item->get_title(),
+				'channel' => $label,
+				'time'    => (int) $item->get_date( 'U' ),
+			);
+		}
+	}
+	usort( $videos, function ( $a, $b ) { return $b['time'] - $a['time']; } );
+	return $videos;
+}
+
 /* 뉴스레터 폼 출력: 플러그인 숏코드가 있으면 사용, 없으면 정적 폼 */
 function w3s_newsletter_form() {
 	if ( shortcode_exists( 'newsletter_form' ) ) {

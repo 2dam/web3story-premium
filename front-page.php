@@ -25,6 +25,60 @@ get_header();
 	<div><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7l7-4z"/></svg>쉽고 신뢰할 수 있는 해설</div>
 </div>
 
+<!-- Live briefing: 실시간 뉴스 + 발행기관 영상 -->
+<section class="section live-section" id="live" style="padding-top:20px">
+	<div class="container">
+		<div class="sec-head">
+			<h2>라이브 브리핑</h2>
+			<p>실시간 암호화폐 뉴스와 주요 발행기관의 최신 영상을 한곳에서 확인하세요.</p>
+		</div>
+		<div class="live-grid">
+			<div class="live-panel news-panel">
+				<h3>📰 실시간 암호화폐 뉴스</h3>
+				<ul class="news-list">
+					<?php
+					$w3s_news = w3s_live_news( 8 );
+					if ( $w3s_news ) :
+						foreach ( $w3s_news as $n ) :
+					?>
+					<li>
+						<a href="<?php echo esc_url( $n['url'] ); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html( $n['title'] ); ?></a>
+						<span class="news-meta"><?php echo esc_html( $n['source'] ); ?><?php if ( $n['time'] ) : ?> · <?php echo esc_html( human_time_diff( $n['time'], current_time( 'timestamp' ) ) ); ?> 전<?php endif; ?></span>
+					</li>
+					<?php endforeach; else : ?>
+					<li><span class="news-meta">뉴스를 불러오는 중입니다. 잠시 후 새로고침해 주세요.</span></li>
+					<?php endif; ?>
+				</ul>
+			</div>
+			<div class="live-panel video-panel">
+				<h3>🎥 발행기관 최신 영상</h3>
+				<?php
+				$w3s_videos = w3s_issuer_videos( 1 );
+				if ( $w3s_videos ) :
+					$w3s_first = array_shift( $w3s_videos );
+				?>
+				<div class="video-embed">
+					<iframe src="https://www.youtube.com/embed/<?php echo esc_attr( $w3s_first['id'] ); ?>" title="<?php echo esc_attr( $w3s_first['title'] ); ?>" loading="lazy" allowfullscreen frameborder="0"></iframe>
+				</div>
+				<div class="video-caption"><strong><?php echo esc_html( $w3s_first['channel'] ); ?></strong> · <?php echo esc_html( $w3s_first['title'] ); ?></div>
+				<ul class="video-list">
+					<?php foreach ( array_slice( $w3s_videos, 0, 3 ) as $v ) : ?>
+					<li>
+						<a href="<?php echo esc_url( 'https://www.youtube.com/watch?v=' . $v['id'] ); ?>" target="_blank" rel="noopener nofollow">
+							<img src="<?php echo esc_url( 'https://i.ytimg.com/vi/' . $v['id'] . '/mqdefault.jpg' ); ?>" alt="" loading="lazy">
+							<span><span class="vt"><?php echo esc_html( $v['title'] ); ?></span><span class="vc"><?php echo esc_html( $v['channel'] ); ?> · <?php echo esc_html( human_time_diff( $v['time'], current_time( 'timestamp' ) ) ); ?> 전</span></span>
+						</a>
+					</li>
+					<?php endforeach; ?>
+				</ul>
+				<?php else : ?>
+				<p class="news-meta">영상을 불러오는 중입니다. 잠시 후 새로고침해 주세요.</p>
+				<?php endif; ?>
+			</div>
+		</div>
+	</div>
+</section>
+
 <!-- Latest articles -->
 <section class="section" id="articles">
 	<div class="container">
