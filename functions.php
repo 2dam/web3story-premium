@@ -50,6 +50,14 @@ add_action('wp', function() { if (is_single()) web3_set_views(get_the_ID()); });
 function web3_excerpt_length() { return 28; }
 add_filter('excerpt_length','web3_excerpt_length');
 
+// 제목에 <br> 태그 허용 (수동 줄바꿈)
+add_filter('the_title', function($title) {
+    return str_replace('&lt;br&gt;', '<br>', $title);
+});
+add_filter('wp_title', function($title) {
+    return str_replace('<br>', ' ', $title);
+});
+
 remove_action('wp_head','print_emoji_detection_script',7);
 remove_action('wp_print_styles','print_emoji_styles');
 
