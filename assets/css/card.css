@@ -1,0 +1,16 @@
+.web3-card {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow var(--transition), transform var(--transition);
+}
+.web3-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+.web3-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+.web3-card-body { padding: 20px; }
+.web3-card-category { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--color-accent); margin-bottom: 8px; }
+.web3-card-category a { color: inherit; }
+.web3-card-title { font-size: 16px; font-weight: 700; line-height: 1.4; margin-bottom: 10px; }
+.web3-card-title a:hover { color: var(--color-accent); }
+.web3-card-text { font-size: 14px; color: var(--color-muted); line-height: 1.6; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.web3-card-footer { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-muted); padding-top: 12px; border-top: 1px solid var(--color-border); }

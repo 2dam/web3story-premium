@@ -1,0 +1,21 @@
+.site-header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+}
+.site-header .container { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 32px; }
+.site-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.site-title a { color: var(--color-heading); }
+.site-title span { color: var(--color-accent); }
+.main-navigation .primary-menu { display: flex; gap: 28px; }
+.main-navigation .primary-menu a { font-size: 14px; font-weight: 600; color: var(--color-muted); transition: color var(--transition); }
+.main-navigation .primary-menu a:hover { color: var(--color-accent); }
+.header-actions { display: flex; align-items: center; gap: 12px; }
+#dark-toggle {
+    background: none; border: 1px solid var(--color-border); border-radius: 8px;
+    width: 36px; height: 36px; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; transition: var(--transition);
+}
+#dark-toggle:hover { background: var(--color-surface); }
