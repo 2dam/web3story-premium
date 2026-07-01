@@ -1,71 +1,114 @@
 <?php
 /**
- * Template Name: Front Page
+ * 홈(프론트) 페이지 — Rooted 스타일
  */
 get_header();
 ?>
-<main class="site-main">
 
-<section class="web3-hero">
-    <div class="hero-content">
-        <span class="hero-badge">🚀 Web3 • AI • Blockchain</span>
-        <h1>미래 기술을 가장 쉽게 이해하는 Web3 미디어</h1>
-        <p>블록체인, AI, 비트코인, 토큰화 자산, Web3 기술을 깊이 있지만 쉽게 설명합니다.</p>
-        <div class="hero-buttons">
-            <a href="/category/blockchain/" class="btn">블록체인</a>
-            <a href="/category/ai/" class="btn-outline">AI</a>
-        </div>
-    </div>
+<!-- Hero -->
+<div class="container hero">
+	<div class="hero-card">
+		<span class="hero-badge">🚀 Web3 · AI · Blockchain</span>
+		<h1>미래 기술을 가장 쉽게 이해하는 Web3 미디어</h1>
+		<p class="sub">블록체인, AI, 비트코인, 토큰화 자산, Web3 기술을 깊이 있지만 쉽게 설명합니다.</p>
+		<div class="hero-actions">
+			<a href="#newsletter" class="btn btn-primary">뉴스레터 구독</a>
+			<a href="#articles" class="btn btn-ghost">최신 글 보기</a>
+		</div>
+	</div>
+</div>
+
+<!-- Feature strip -->
+<div class="strip container">
+	<div><svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>블록체인 심층 분석</div>
+	<div><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>매주 업데이트되는 리서치</div>
+	<div><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7l7-4z"/></svg>쉽고 신뢰할 수 있는 해설</div>
+</div>
+
+<!-- Latest articles -->
+<section class="section" id="articles">
+	<div class="container">
+		<div class="sec-head">
+			<h2>최신 글</h2>
+			<p>Web3와 AI 세계의 가장 중요한 흐름을 골라 쉽게 풀어드립니다.</p>
+		</div>
+		<div class="grid-3">
+			<?php
+			$latest = new WP_Query( array( 'posts_per_page' => 6, 'ignore_sticky_posts' => true ) );
+			while ( $latest->have_posts() ) : $latest->the_post();
+			?>
+			<article class="post-card">
+				<?php if ( has_post_thumbnail() ) : ?>
+					<a href="<?php the_permalink(); ?>" class="thumb"><?php the_post_thumbnail( 'medium_large' ); ?></a>
+				<?php endif; ?>
+				<?php $cat = get_the_category(); if ( $cat ) : ?>
+					<span class="cat"><?php echo esc_html( $cat[0]->name ); ?></span>
+				<?php endif; ?>
+				<h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+				<div class="meta"><?php echo esc_html( get_the_date() ); ?></div>
+				<div class="excerpt"><?php echo esc_html( get_the_excerpt() ); ?></div>
+				<a class="read-more" href="<?php the_permalink(); ?>">Read More</a>
+			</article>
+			<?php endwhile; wp_reset_postdata(); ?>
+		</div>
+		<div class="center">
+			<a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/블로그/' ) ); ?>" class="btn btn-primary">전체 글 보기</a>
+		</div>
+	</div>
 </section>
 
-<?php
-$featured = new WP_Query(['posts_per_page' => 1, 'meta_key' => 'featured', 'meta_value' => '1']);
-if ($featured->have_posts()): while ($featured->have_posts()): $featured->the_post();
-?>
-<section class="featured-post">
-    <article class="web3-card">
-        <div class="featured-image">
-            <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('large'); ?></a>
-        </div>
-        <div class="featured-content">
-            <div class="cat-links"><?php the_category(' '); ?></div>
-            <h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-            <p><?php echo wp_trim_words(get_the_excerpt(), 35); ?></p>
-            <a class="btn" href="<?php the_permalink(); ?>">계속 읽기 →</a>
-        </div>
-    </article>
-</section>
-<?php endwhile; wp_reset_postdata(); endif; ?>
-
-<section class="latest-posts">
-    <div class="section-title"><h2>최신 글</h2></div>
-    <div class="posts-grid">
-    <?php
-    $query = new WP_Query(['post_type' => 'post', 'posts_per_page' => 9]);
-    while ($query->have_posts()): $query->the_post();
-    ?>
-    <article class="web3-card">
-        <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('medium_large'); ?></a>
-        <div class="web3-card-body">
-            <div class="web3-card-category"><?php the_category(', '); ?></div>
-            <h3 class="web3-card-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
-            <p class="web3-card-text"><?php echo wp_trim_words(get_the_excerpt(), 22); ?></p>
-            <div class="web3-card-footer">
-                <span><?php echo get_the_date(); ?></span>
-                <span><?php echo web3_reading_time(); ?></span>
-            </div>
-        </div>
-    </article>
-    <?php endwhile; wp_reset_postdata(); ?>
-    </div>
+<!-- Topics -->
+<section class="section" id="topics" style="padding-top:0">
+	<div class="container">
+		<div class="sec-head">
+			<h2>주제 탐색</h2>
+			<p>Web3Story의 핵심 카테고리에서 실용적인 인사이트를 만나보세요.</p>
+		</div>
+		<div class="grid-2">
+			<?php
+			$icons = array(
+				'<svg viewBox="0 0 24 24" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 018 0v2"/></svg>',
+				'<svg viewBox="0 0 24 24" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.5 2.5M16.5 16.5L19 19M19 5l-2.5 2.5M7.5 16.5L5 19"/></svg>',
+				'<svg viewBox="0 0 24 24" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 6v1.7M12 16.3V18M14.5 9c-.4-.8-1.4-1.3-2.5-1.3-1.5 0-2.7.9-2.7 2.1 0 2.7 5.6 1.4 5.6 4.1 0 1.2-1.2 2.1-2.9 2.1-1.3 0-2.4-.6-2.8-1.5"/></svg>',
+				'<svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg>',
+			);
+			$topics = get_categories( array( 'orderby' => 'count', 'order' => 'DESC', 'number' => 4 ) );
+			foreach ( $topics as $i => $t ) :
+			?>
+			<div class="topic">
+				<?php echo $icons[ $i % 4 ]; // phpcs:ignore ?>
+				<h3><?php echo esc_html( $t->name ); ?></h3>
+				<p><?php echo esc_html( $t->description ? $t->description : $t->name . ' 관련 글 ' . $t->count . '편을 만나보세요.' ); ?></p>
+				<a class="read-more" href="<?php echo esc_url( get_category_link( $t ) ); ?>">Explore</a>
+			</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
 </section>
 
-<section class="newsletter-box">
-    <h2>Web3Story Newsletter</h2>
-    <p>매주 Web3와 AI의 핵심 소식을 받아보세요.</p>
-    <?php echo do_shortcode('[newsletter_form]'); ?>
+<!-- About -->
+<section class="section" id="about" style="padding-top:0">
+	<div class="container about">
+		<div>
+			<h2>어려운 기술을,<br>누구나 이해할 수 있는 이야기로</h2>
+			<p>Web3Story는 블록체인·AI·암호화폐 분야의 논문과 기관 리포트를 직접 읽고, 핵심만 골라 쉬운 언어로 전달하는 독립 미디어입니다.</p>
+			<p>과장된 전망 대신 데이터와 근거를 바탕으로, 기술의 본질과 시장의 맥락을 함께 이해할 수 있도록 돕습니다.</p>
+			<?php $about_page = get_page_by_path( 'about' ); ?>
+			<a href="<?php echo esc_url( $about_page ? get_permalink( $about_page ) : home_url( '/about/' ) ); ?>" class="btn btn-primary" style="margin-top:12px">더 알아보기</a>
+		</div>
+		<div class="visual"><span>⛓️</span></div>
+	</div>
 </section>
 
-</main>
-<?php get_sidebar(); ?>
+<!-- Newsletter -->
+<section class="section" id="newsletter" style="padding-top:0">
+	<div class="container">
+		<div class="newsletter">
+			<h2>Web3Story 뉴스레터</h2>
+			<p>매주 Web3와 AI의 핵심 소식을 이메일로 받아보세요. 광고 없이, 인사이트만 담아 보냅니다.</p>
+			<?php w3s_newsletter_form(); ?>
+		</div>
+	</div>
+</section>
+
 <?php get_footer(); ?>

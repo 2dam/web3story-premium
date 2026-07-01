@@ -1,73 +1,63 @@
 <?php
-if (!defined('ABSPATH')) exit;
+/**
+ * Web3Story Rooted theme functions
+ */
 
-function web3story_setup() {
-    add_theme_support('title-tag');
-    add_theme_support('post-thumbnails');
-    add_theme_support('custom-logo', ['height'=>80,'width'=>260,'flex-height'=>true,'flex-width'=>true]);
-    add_theme_support('responsive-embeds');
-    add_theme_support('automatic-feed-links');
-    add_theme_support('html5', ['search-form','gallery','caption','style','script']);
-    register_nav_menus(['primary'=>'Primary Menu','footer'=>'Footer Menu']);
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+function w3s_setup() {
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'custom-logo', array( 'height' => 84, 'width' => 400, 'flex-height' => true, 'flex-width' => true ) );
+	add_theme_support( 'html5', array( 'search-form', 'gallery', 'caption', 'style', 'script' ) );
+	add_theme_support( 'automatic-feed-links' );
+	register_nav_menus( array(
+		'primary' => '상단 메뉴',
+		'footer'  => '푸터 메뉴',
+	) );
 }
-add_action('after_setup_theme','web3story_setup');
+add_action( 'after_setup_theme', 'w3s_setup' );
 
-add_image_size('web3-featured',1400,800,true);
-add_image_size('web3-card',700,420,true);
-
-function web3story_enqueue() {
-    wp_enqueue_style('parent', get_template_directory_uri().'/style.css');
-    $css = ['base','layout','header','home','article','sidebar','button','card','progress','toc','dark','dark-toggle','footer','mobile'];
-    foreach ($css as $file) {
-        $path = get_stylesheet_directory().'/assets/css/'.$file.'.css';
-        if (file_exists($path)) {
-            wp_enqueue_style('web3-'.$file, get_stylesheet_directory_uri().'/assets/css/'.$file.'.css', ['parent'], filemtime($path));
-        }
-    }
-    $js = ['progress','toc','darkmode','app'];
-    foreach ($js as $file) {
-        $path = get_stylesheet_directory().'/assets/js/'.$file.'.js';
-        if (file_exists($path)) {
-            wp_enqueue_script('web3-'.$file, get_stylesheet_directory_uri().'/assets/js/'.$file.'.js', [], filemtime($path), true);
-        }
-    }
+function w3s_scripts() {
+	wp_enqueue_style( 'w3s-fonts', 'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Noto+Sans+KR:wght@400;500;700&display=swap', array(), null );
+	wp_enqueue_style( 'w3s-style', get_stylesheet_uri(), array( 'w3s-fonts' ), wp_get_theme()->get( 'Version' ) );
 }
-add_action('wp_enqueue_scripts','web3story_enqueue');
+add_action( 'wp_enqueue_scripts', 'w3s_scripts' );
 
-function web3_reading_time() {
-    $content = get_post_field('post_content', get_the_ID());
-    $words = str_word_count(wp_strip_all_tags($content));
-    return max(1, ceil($words/220)).' min read';
+/* 발췌 길이/말줄임 */
+add_filter( 'excerpt_length', function () { return 24; } );
+add_filter( 'excerpt_more', function () { return '…'; } );
+
+/* 모바일 메뉴 토글 (인라인 소형 스크립트) */
+function w3s_footer_js() { ?>
+	<script>
+	(function(){var b=document.querySelector('.hamburger'),n=document.querySelector('.nav-links');
+	if(b&&n){b.addEventListener('click',function(){n.classList.toggle('open');});}})();
+	</script>
+<?php }
+add_action( 'wp_footer', 'w3s_footer_js' );
+
+/* 기본 메뉴 폴백 */
+function w3s_menu_fallback() {
+	echo '<ul>';
+	echo '<li><a href="' . esc_url( home_url( '/' ) ) . '">홈</a></li>';
+	$about = get_page_by_path( 'about' );
+	if ( $about ) echo '<li><a href="' . esc_url( get_permalink( $about ) ) . '">About</a></li>';
+	echo '<li><a href="' . esc_url( home_url( '/블로그/' ) ) . '">블로그</a></li>';
+	$contact = get_page_by_path( 'contact-us' );
+	if ( $contact ) echo '<li><a href="' . esc_url( get_permalink( $contact ) ) . '">Contact</a></li>';
+	echo '</ul>';
 }
-add_shortcode('rt_reading_time','web3_reading_time');
 
-function web3_set_views($id) {
-    $views = get_post_meta($id,'views',true);
-    update_post_meta($id,'views', empty($views) ? 1 : $views+1);
+/* 뉴스레터 폼 출력: 플러그인 숏코드가 있으면 사용, 없으면 정적 폼 */
+function w3s_newsletter_form() {
+	if ( shortcode_exists( 'newsletter_form' ) ) {
+		echo do_shortcode( '[newsletter_form]' );
+	} else {
+		echo '<form action="#" method="post" onsubmit="event.preventDefault();alert(\'구독 신청이 완료되었습니다!\');">';
+		echo '<label for="w3s-email">이메일 주소</label>';
+		echo '<input id="w3s-email" type="email" name="ne" placeholder="your@email.com" required>';
+		echo '<button class="btn btn-primary" type="submit">구독하기</button>';
+		echo '</form>';
+	}
 }
-add_action('wp', function() { if (is_single()) web3_set_views(get_the_ID()); });
-
-function web3_excerpt_length() { return 28; }
-add_filter('excerpt_length','web3_excerpt_length');
-
-// 제목에 <br> 태그 허용 (수동 줄바꿈)
-add_filter('the_title', function($title) {
-    return str_replace('&lt;br&gt;', '<br>', $title);
-});
-add_filter('wp_title', function($title) {
-    return str_replace('<br>', ' ', $title);
-});
-
-remove_action('wp_head','print_emoji_detection_script',7);
-remove_action('wp_print_styles','print_emoji_styles');
-
-add_action('wp_enqueue_scripts', function() { wp_dequeue_style('global-styles'); }, 100);
-
-add_filter('wp_lazy_loading_enabled','__return_true');
-
-add_filter('body_class', function($classes) { $classes[]='web3story'; return $classes; });
-
-function web3_widgets() {
-    register_sidebar(['name'=>'Sidebar','id'=>'sidebar','before_widget'=>'<section class="widget">','after_widget'=>'</section>','before_title'=>'<h3 class="widget-title">','after_title'=>'</h3>']);
-}
-add_action('widgets_init','web3_widgets');
