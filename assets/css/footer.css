@@ -1,9 +1,0 @@
-.site-footer { background:#0f172a; color:rgba(255,255,255,0.7); padding:56px 0 32px; }
-.site-footer .container { display:grid; grid-template-columns:1fr auto auto; gap:48px; align-items:start; padding-bottom:32px; border-bottom:1px solid rgba(255,255,255,0.1); }
-.footer-logo h2 { color:#fff; font-size:22px; font-weight:800; margin-bottom:8px; }
-.footer-logo h2 span { color:var(--color-accent); }
-.footer-logo p { font-size:13px; color:rgba(255,255,255,0.4); }
-.footer-menu ul { display:flex; flex-direction:column; gap:10px; }
-.footer-menu a { font-size:14px; color:rgba(255,255,255,0.6); transition:color var(--transition); }
-.footer-menu a:hover { color:var(--color-accent); }
-.copyright { font-size:12px; color:rgba(255,255,255,0.3); text-align:center; padding-top:24px; }

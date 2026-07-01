@@ -1,4 +1,0 @@
-.btn { display:inline-flex; align-items:center; gap:6px; background:var(--color-accent); color:#fff; font-size:14px; font-weight:700; padding:10px 22px; border-radius:8px; border:none; cursor:pointer; transition:background var(--transition),transform var(--transition); }
-.btn:hover { background:var(--color-accent-dark); transform:translateY(-1px); }
-.btn-outline { display:inline-flex; align-items:center; gap:6px; background:transparent; color:#fff; font-size:14px; font-weight:700; padding:10px 22px; border-radius:8px; border:2px solid rgba(255,255,255,0.4); cursor:pointer; transition:var(--transition); }
-.btn-outline:hover { background:rgba(255,255,255,0.1); border-color:#fff; }
