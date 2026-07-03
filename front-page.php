@@ -9,7 +9,7 @@ get_header();
 <div class="container hero">
 	<div class="hero-card">
 		<span class="hero-badge">🚀 Web3 · AI · Blockchain</span>
-		<h1>미래 기술을 가장 쉽게 이해하는 Web3 미디어</h1>
+		<h1>블록체인의 기술, 암호화폐의 기세(氣勢), 규제정책의 저항력 <br>3요소가 미래 가치를 결정한다.</h1>
 		<p class="sub">블록체인, AI, 비트코인, 토큰화 자산, Web3 기술을 깊이 있지만 쉽게 설명합니다.</p>
 		<div class="hero-actions">
 			<a href="#newsletter" class="btn btn-primary">뉴스레터 구독</a>
