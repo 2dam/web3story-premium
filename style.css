@@ -179,5 +179,6 @@ img{max-width:100%;height:auto;display:block}
 }
 
 @media(max-width:480px){
-  .hero-card h1{font-size:1.05rem;line-height:1.5}
+  .hero-card{padding:48px 14px}
+  .hero-card h1{font-size:clamp(0.9rem,4vw,1.2rem);line-height:1.6}
 }
